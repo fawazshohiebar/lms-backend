@@ -15,6 +15,7 @@ class AdminController extends Controller
      */
     public function index()
     {
+        
         $admin = Admin::all();
         $adminData = $admin->map(function ($admins) {
             return [
