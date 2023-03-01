@@ -15,7 +15,16 @@ class SectionsController extends Controller
      */
     public function index()
     {
-        //
+        $sections = sections::all();
+        $sectionData = $sections->map(function ($sections) {
+            return [
+                'id' => $sections->id,
+                'Section_Name' => $sections->Section_Name,
+                'Class_ID' => $sections->Class_ID, 
+                'Admin_ID' => $sections->Admin_ID, 
+            ];
+        });
+        return $sections;
     }
 
     /**
@@ -36,7 +45,13 @@ class SectionsController extends Controller
      */
     public function store(StoresectionsRequest $request)
     {
-        //
+        $sections = new sections();
+        $sections->Section_Name=$request->input('Section_Name');
+        $sections->Class_ID=$request->input('Class_ID');
+        $sections->Admin_ID=$request->input('Admin_ID');
+        $sections->save();
+        return response()->json(['message' => 'sections created successfully'], 201);
+     
     }
 
     /**
@@ -68,9 +83,17 @@ class SectionsController extends Controller
      * @param  \App\Models\sections  $sections
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatesectionsRequest $request, sections $sections)
+    public function update(UpdatesectionsRequest $request, sections $sections,$id)
     {
-        //
+        $sections = sections::find($id);
+        if (!$sections) {
+            return response()->json(['message' => 'sect$sections not found'], 404);
+        }
+        $sections->Section_Name = $request->has('Section_Name')? $request->input('Section_Name'):$sections->Section_Name;
+        // $sections->Class_ID = $request->has('Class_ID')?$request->input('Class_ID'):$sections->Class_ID;
+        // $sections->Admin_ID = $request->has('Admin_ID')?$request->input('Admin_ID'):$sections->Admin_ID;
+        $sections->save();
+        return response()->json(['message' => 'sections updated successfully'], 200);
     }
 
     /**
@@ -79,8 +102,11 @@ class SectionsController extends Controller
      * @param  \App\Models\sections  $sections
      * @return \Illuminate\Http\Response
      */
-    public function destroy(sections $sections)
+    public function destroy(sections $sections, $id)
     {
         //
+        $sections = sections::find($id);
+        $sections->delete();
+        return "the id have been deleted ";
     }
 }

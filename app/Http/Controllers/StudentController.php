@@ -15,7 +15,18 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        $student = student::all();
+        $studentData = $student->map(function($student){
+            return [
+                'id' => $student->id,
+                'First_Name'=> $student->First_Name,
+                'Last_Name'=>$student->Last_Name,
+                'phone_number'=>$student->phone_number,
+                'image_path'=>$student->image_path,
+                'Section_ID'=>$student->Section_ID,
+            ];
+        });
+            return $student;
     }
 
     /**
@@ -36,7 +47,14 @@ class StudentController extends Controller
      */
     public function store(StorestudentRequest $request)
     {
-        //
+        $student = new student();
+        $student->FIrst_Name=$request->input('First_Name');
+        $student->Last_Name=$request->input('Last_Name');
+        $student->phone_number=$request->input('phone_number');
+        $student->image_path=$request->input('image_path');
+        $student->Section_ID=$request->input('Section_ID');
+        $student->save();
+        return response()->json(['message' =>'student entered successfully' ]);
     }
 
     /**
@@ -68,9 +86,20 @@ class StudentController extends Controller
      * @param  \App\Models\student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatestudentRequest $request, student $student)
+    public function update(UpdatestudentRequest $request, student $student, $id)
     {
-        //
+        $student = student::find($id);
+        if (!$student) {
+            return response()->json(['message' => 'student not found'], 404);
+        }
+            $student->First_Name = $request->has('First_Name')? $request->input('First_Name'):$student->First_Name;
+            $student->Last_Name = $request->has('Last_Name')?$request->input('Last_Name'):$student->Last_Name;
+            $student->phone_number = $request->has('phone_number')?$request->input('phone_number'):$student->phone_number;
+
+            $student->image_path = $request->has('image_path')?$request->input('image_path'):$student->image_path;
+            $student->Section_ID = $request->has('Section_ID')?$request->input('Section_ID'):$student->Section_ID;
+            $student->save();
+            return response()->json(['message' => 'Student updated successfully'], 200);   
     }
 
     /**
@@ -79,8 +108,11 @@ class StudentController extends Controller
      * @param  \App\Models\student  $student
      * @return \Illuminate\Http\Response
      */
-    public function destroy(student $student)
+    public function destroy(student $request, $id)
     {
-        //
+        $ana = student::find($id);
+        $ana->delete();
+        return "the id have been deleted ";
+    
     }
 }
