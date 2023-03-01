@@ -15,7 +15,16 @@ class CoursesController extends Controller
      */
     public function index()
     {
-        //
+        $course = courses::all();
+        $courseData = $course->map(function ($course) {
+            return [
+                'id' => $course->id,
+                'Course_Name' => $course->Course_Name,
+                'Section_ID' => $course->Section_ID, 
+               
+            ];
+        });
+        return $course;
     }
 
     /**
@@ -36,7 +45,13 @@ class CoursesController extends Controller
      */
     public function store(StorecoursesRequest $request)
     {
-        //
+        $course = new courses();
+        $course->Course_Name=$request->input('Course_Name');
+        $course->Section_ID=$request->input('Section_ID');
+       
+        $course->save();
+        return response()->json(['message' => 'course$course created successfully'], 201);
+     
     }
 
     /**
@@ -68,9 +83,17 @@ class CoursesController extends Controller
      * @param  \App\Models\courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatecoursesRequest $request, courses $courses)
+    public function update(UpdatecoursesRequest $request, courses $courses,$id)
     {
-        //
+        $courses = courses::find($id);
+        if (!$courses) {
+            return response()->json(['message' => 'courses not found'], 404);
+        }
+        $courses->Course_Name = $request->has('Course_Name')? $request->input('Course_Name'):$courses->Course_Name;
+
+        $courses->save();
+        return response()->json(['message' => 'courses updated successfully'], 200);
+ 
     }
 
     /**
@@ -81,6 +104,8 @@ class CoursesController extends Controller
      */
     public function destroy(courses $courses)
     {
-        //
+        $ana = courses::find($id);
+        $ana->delete();
+        return "the id have been deleted ";
     }
 }
