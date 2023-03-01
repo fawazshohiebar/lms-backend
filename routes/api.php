@@ -7,6 +7,7 @@ use App\Http\Controllers\ClassesController;
 use App\Http\Controllers\SectionsController;
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +56,8 @@ Route::post('/student/post', [StudentController::class, 'store']);
 Route::get('/student/read', [StudentController::class, 'index']);
 Route::put('/student/edit/{id}', [StudentController::class, 'update']);
 Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);
+
+Route::post('/attedance/post', [AttendanceController::class, 'store']);
+Route::get('/attendance/read', [AttendanceController::class, 'index']);
+Route::put('/attendance/edit/{id}', [AttendanceController::class, 'update']);
+Route::delete('/attendance/delete/{id}', [AttendanceController::class, 'destroy']);
