@@ -48,15 +48,23 @@ class StudentController extends Controller
     public function store(StorestudentRequest $request)
     {
         $student = new student();
-        $student->FIrst_Name=$request->input('First_Name');
-        $student->Last_Name=$request->input('Last_Name');
-        $student->phone_number=$request->input('phone_number');
-        $student->image_path=$request->input('image_path');
-        $student->Section_ID=$request->input('Section_ID');
+        $student->First_Name = $request->input('First_Name');
+        $student->Last_Name = $request->input('Last_Name');
+        $student->phone_number = $request->input('phone_number');
+    
+        // handle file upload
+        if ($request->hasFile('image_path')) {
+            $file = $request->file('image_path');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $student->image_path = 'uploads/' . $filename;
+        }
+    
+        $student->Section_ID = $request->input('Section_ID');
         $student->save();
-        return response()->json(['message' =>'student entered successfully' ]);
+        return response()->json(['message' => 'student entered successfully']);
     }
-
+    
     /**
      * Display the specified resource.
      *
@@ -86,21 +94,32 @@ class StudentController extends Controller
      * @param  \App\Models\student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatestudentRequest $request, student $student, $id)
+    public function update(UpdatestudentRequest $request, $id)
     {
         $student = student::find($id);
         if (!$student) {
             return response()->json(['message' => 'student not found'], 404);
         }
-            $student->First_Name = $request->has('First_Name')? $request->input('First_Name'):$student->First_Name;
-            $student->Last_Name = $request->has('Last_Name')?$request->input('Last_Name'):$student->Last_Name;
-            $student->phone_number = $request->has('phone_number')?$request->input('phone_number'):$student->phone_number;
-
-            $student->image_path = $request->has('image_path')?$request->input('image_path'):$student->image_path;
-            $student->Section_ID = $request->has('Section_ID')?$request->input('Section_ID'):$student->Section_ID;
-            $student->save();
-            return response()->json(['message' => 'Student updated successfully'], 200);   
+    
+        $student->First_Name = $request->has('First_Name') ? $request->input('First_Name') : $student->First_Name;
+        $student->Last_Name = $request->has('Last_Name') ? $request->input('Last_Name') : $student->Last_Name;
+        $student->phone_number = $request->has('phone_number') ? $request->input('phone_number') : $student->phone_number;
+    
+        // handle file upload
+        if ($request->hasFile('image_path')) {
+            $file = $request->file('image_path');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $student->image_path = 'uploads/' . $filename;
+        } else {
+            $student->image_path = $request->has('image_path') ? $request->input('image_path') : $student->image_path;
+        }
+    
+        $student->Section_ID = $request->has('Section_ID') ? $request->input('Section_ID') : $student->Section_ID;
+        $student->save();
+        return response()->json(['message' => 'Student updated successfully'], 200);   
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -115,4 +134,16 @@ class StudentController extends Controller
         return "the id have been deleted ";
     
     }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  str $First_Name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($name)
+    {
+        
+        return  student::where('First_Name','like','%'.$name.'%')->get();
+    }
 }
+

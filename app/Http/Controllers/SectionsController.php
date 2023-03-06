@@ -109,4 +109,11 @@ class SectionsController extends Controller
         $sections->delete();
         return "the id have been deleted ";
     }
+
+
+    public function search( $class)
+    {
+        
+        return  sections::where('name','like','%'.$class.'%')->get();
+    }
 }

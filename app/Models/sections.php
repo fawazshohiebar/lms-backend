@@ -14,8 +14,8 @@ class sections extends Model
         return $this->belongsTo(classes::class);
     }
     
-    public function Admin(){
-        return $this->belongsTo(Admin::class);
+    public function User(){
+        return $this->belongsTo(User::class);
     }
     public function courses(){
         return $this->hasMany(courses::class);

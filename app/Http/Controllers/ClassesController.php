@@ -39,10 +39,10 @@ class ClassesController extends Controller
      */
     public function store(StoreclassesRequest $request)
     {
-        $clas = new classes();
-        $clas->Class_Name=$request->input('Class_Name');
+        $class = new classes();
+        $class->Class_Name=$request->input('Class_Name');
       
-        $clas->save();
+        $class->save();
         return response()->json(['message' => 'clas$clas created successfully'], 201);
      
     }
@@ -100,5 +100,10 @@ class ClassesController extends Controller
         $ana = classes::find($id);
             $ana->delete();
             return "the id have been deleted ";
+    }
+    public function search($class)
+    {
+        
+        return  classes::where('name','like','%'.$class.'%')->get();
     }
 }

@@ -20,8 +20,8 @@ class CoursesController extends Controller
             return [
                 'id' => $course->id,
                 'Course_Name' => $course->Course_Name,
-                'Section_ID' => $course->Section_ID, 
-               
+                'Section_ID' => $course->Section_ID,
+
             ];
         });
         return $course;
@@ -46,12 +46,11 @@ class CoursesController extends Controller
     public function store(StorecoursesRequest $request)
     {
         $course = new courses();
-        $course->Course_Name=$request->input('Course_Name');
-        $course->Section_ID=$request->input('Section_ID');
-       
+        $course->Course_Name = $request->input('Course_Name');
+        $course->Section_ID = $request->input('Section_ID');
+
         $course->save();
         return response()->json(['message' => 'course$course created successfully'], 201);
-     
     }
 
     /**
@@ -83,17 +82,16 @@ class CoursesController extends Controller
      * @param  \App\Models\courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatecoursesRequest $request, courses $courses,$id)
+    public function update(UpdatecoursesRequest $request, courses $courses, $id)
     {
         $courses = courses::find($id);
         if (!$courses) {
             return response()->json(['message' => 'courses not found'], 404);
         }
-        $courses->Course_Name = $request->has('Course_Name')? $request->input('Course_Name'):$courses->Course_Name;
+        $courses->Course_Name = $request->has('Course_Name') ? $request->input('Course_Name') : $courses->Course_Name;
 
         $courses->save();
         return response()->json(['message' => 'courses updated successfully'], 200);
- 
     }
 
     /**
@@ -102,10 +100,15 @@ class CoursesController extends Controller
      * @param  \App\Models\courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function destroy(courses $courses)
+    public function destroy(courses $courses , $id)
     {
         $ana = courses::find($id);
         $ana->delete();
         return "the id have been deleted ";
+    }
+    public function search(courses $Course_Name)
+    {
+
+        return  courses::where('name', 'like', '%' . $Course_Name . '%')->get();
     }
 }
