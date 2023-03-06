@@ -8,6 +8,8 @@ use App\Http\Controllers\SectionsController;
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AuthController;
+use GuzzleHttp\Middleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,17 +25,31 @@ use App\Http\Controllers\AttendanceController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+// Protected Route
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+});
+/////////////////////
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+/////////////////////
+
 
 Route::post('/admin/post', [AdminController::class, 'store']);
 Route::get('/admin/read', [AdminController::class, 'index']);
 Route::put('/admin/edit/{id}', [AdminController::class, 'update']);
 Route::delete('/admin/delete/{id}', [AdminController::class, 'destroy']);
+Route::get('/admin/search/{searchterm}', [AdminController::class, 'search']);
 
 
 Route::post('/classes/post', [ClassesController::class, 'store']);
 Route::get('/classes/read', [ClassesController::class, 'index']);
 Route::put('/classes/edit/{id}', [ClassesController::class, 'update']);
 Route::delete('/classes/delete/{id}', [ClassesController::class, 'destroy']);
+Route::get('/classes/search/{class}', [ClassesController::class, 'search']);
 
 
 
@@ -42,6 +58,7 @@ Route::post('/section/post', [SectionsController::class, 'store']);
 Route::get('/section/read', [SectionsController::class, 'index']);
 Route::put('/section/edit/{id}', [SectionsController::class, 'update']);
 Route::delete('/section/delete/{id}', [SectionsController::class, 'destroy']);
+Route::get('/section/search/{sec}', [SectionsController::class, 'search']);
 
 
 
@@ -49,15 +66,18 @@ Route::post('/courses/post', [CoursesController::class, 'store']);
 Route::get('/courses/read', [CoursesController::class, 'index']);
 Route::put('/courses/edit/{id}', [CoursesController::class, 'update']);
 Route::delete('/courses/delete/{id}', [CoursesController::class, 'destroy']);
+// Route::get('/courses/search/{id}', [CoursesController::class, 'search']);
 
 
+Route::get('/student/read', [StudentController::class, 'index']);
 
 Route::post('/student/post', [StudentController::class, 'store']);
-Route::get('/student/read', [StudentController::class, 'index']);
 Route::put('/student/edit/{id}', [StudentController::class, 'update']);
 Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);
+Route::get('/student/search/{name}', [StudentController::class, 'search']);
 
 Route::post('/attedance/post', [AttendanceController::class, 'store']);
 Route::get('/attendance/read', [AttendanceController::class, 'index']);
 Route::put('/attendance/edit/{id}', [AttendanceController::class, 'update']);
+// Route::get('/attendance/search/{id}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/delete/{id}', [AttendanceController::class, 'destroy']);

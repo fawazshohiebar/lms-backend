@@ -114,4 +114,16 @@ class AdminController extends Controller
             return "the id have been deleted ";
         
     }
+    
+    /**
+     
+     *
+     * @param  str  $Role
+     * @return \Illuminate\Http\Response
+     */
+    public function search($searchterm)
+    {
+        
+        return  Admin::where('Role','like','%'.$searchterm.'%')->get();
+    }
 }

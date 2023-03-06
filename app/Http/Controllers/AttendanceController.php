@@ -15,17 +15,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $attendance = Attendance::all();
+        $attendance = Attendance::all(); 
         $attendanceData = $attendance->map(function($attendance){
             return [
                 'id' => $attendance->id,
@@ -36,6 +26,16 @@ class AttendanceController extends Controller
         });
             return $attendance;
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+    }
+      
 
     /**
      * Store a newly created resource in storage.
@@ -107,5 +107,10 @@ class AttendanceController extends Controller
         $ana = attendance::find($id);
         $ana->delete();
         return "the id have been deleted ";
+    }
+    public function search(attendance $Date)
+    {
+        
+        return  attendance::where('name','like','%'.$Date.'%')->get();
     }
 }
