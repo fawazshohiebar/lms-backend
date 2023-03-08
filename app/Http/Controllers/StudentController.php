@@ -52,7 +52,7 @@ class StudentController extends Controller
         $student->Last_Name = $request->input('Last_Name');
         $student->phone_number = $request->input('phone_number');
     
-        // handle file upload
+        // handle file upload.
         if ($request->hasFile('image_path')) {
             $file = $request->file('image_path');
             $filename = time() . '_' . $file->getClientOriginalName();
