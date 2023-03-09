@@ -106,9 +106,9 @@ class CoursesController extends Controller
         $ana->delete();
         return "the id have been deleted ";
     }
-    public function search(courses $Course_Name)
+    public function search(courses $cname)
     {
 
-        return  courses::where('name', 'like', '%' . $Course_Name . '%')->get();
+        return  courses::where('Course_Name', 'like', '%' . $cname . '%')->get();
     }
 }
