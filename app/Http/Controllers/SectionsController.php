@@ -21,7 +21,7 @@ class SectionsController extends Controller
                 'id' => $sections->id,
                 'Section_Name' => $sections->Section_Name,
                 'Class_ID' => $sections->Class_ID, 
-                'Admin_ID' => $sections->Admin_ID, 
+                'User_ID' => $sections->User_ID, 
             ];
         });
         return $sections;
@@ -48,7 +48,7 @@ class SectionsController extends Controller
         $sections = new sections();
         $sections->Section_Name=$request->input('Section_Name');
         $sections->Class_ID=$request->input('Class_ID');
-        $sections->Admin_ID=$request->input('Admin_ID');
+        $sections->User_ID=$request->input('User_ID');
         $sections->save();
         return response()->json(['message' => 'sections created successfully'], 201);
      
