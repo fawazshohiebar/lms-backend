@@ -66,7 +66,7 @@ Route::post('/courses/post', [CoursesController::class, 'store']);
 Route::get('/courses/read', [CoursesController::class, 'index']);
 Route::put('/courses/edit/{id}', [CoursesController::class, 'update']);
 Route::delete('/courses/delete/{id}', [CoursesController::class, 'destroy']);
-// Route::get('/courses/search/{id}', [CoursesController::class, 'search']);
+Route::get('/courses/search/{cname}', [CoursesController::class, 'search']);
 
 
 Route::get('/student/read', [StudentController::class, 'index']);
@@ -79,5 +79,5 @@ Route::get('/student/search/{name}', [StudentController::class, 'search']);
 Route::post('/attedance/post', [AttendanceController::class, 'store']);
 Route::get('/attendance/read', [AttendanceController::class, 'index']);
 Route::put('/attendance/edit/{id}', [AttendanceController::class, 'update']);
-// Route::get('/attendance/search/{id}', [AttendanceController::class, 'search']);
+Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/delete/{id}', [AttendanceController::class, 'destroy']);
