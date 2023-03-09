@@ -17,7 +17,7 @@ class CreateSectionsTable extends Migration
             $table->id();
             $table->string('Section_Name');
             $table->unsignedBigInteger('Class_ID');
-            $table->unsignedBigInteger('Admin_ID');
+            $table->unsignedBigInteger('User_ID');
             $table->timestamps();
 
 
@@ -28,7 +28,7 @@ class CreateSectionsTable extends Migration
             $table->foreign('Class_ID')->references('id')->on('classes');
 
 
-            $table->foreign('Admin_ID')->references('id')->on('admins');
+            $table->foreign('User_ID')->references('id')->on('users');
 
         });
     }
