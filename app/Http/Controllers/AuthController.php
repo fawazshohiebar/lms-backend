@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\log;
 
 class AuthController extends Controller
 {
+    public function index()
+    {
+        
+        return  User::all();
+       
+    }
+    public function search($searchterm)
+    {
+        
+        return  User::where('Role','like','%'.$searchterm.'%')->get();
+    }
     public function register(Request $request)
     {
         $fields = $request->validate([
