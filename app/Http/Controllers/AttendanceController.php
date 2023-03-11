@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
+use App\Models\student;
+use Carbon\Carbon;
+use \Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
@@ -35,24 +38,38 @@ class AttendanceController extends Controller
     public function create()
     {
     }
-      
+
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreattendanceRequest  $request
+     * @param  \App\Http\Requests\x  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreattendanceRequest $request)
+    // public function store(StoreattendanceRequest $request)
+    // {
+    //     $attendance = new attendance();
+    //     $attendance->Date=$request->input('Date');
+    //     $attendance->Status=$request->input('Status');
+    //     $attendance->Students_ID=$request->input('Students_ID');
+    //     $attendance->save();
+    //     return response()->json(['message' =>'attendance entered successfully' ]);
+    // }
+    public function store(Request $request)
     {
-        $attendance = new attendance();
-        $attendance->Date=$request->input('Date');
-        $attendance->Status=$request->input('Status');
-        $attendance->Students_ID=$request->input('Students_ID');
-        $attendance->save();
-        return response()->json(['message' =>'attendance entered successfully' ]);
+        $attendanceData = $request->input('attendance');
+        
+        foreach ($attendanceData as $data) {
+            $attendance = new Attendance();
+            $attendance->Date = now()->format('Y-m-d');
+            $attendance->Status = $data['attendanceType'];
+            $attendance->Students_ID = $data['studentId'];
+            $attendance->save();
+        }
+    
+        return response()->json(['message' =>'Attendance entered successfully']);
     }
-
+    
     /**
      * Display the specified resource.
      *
@@ -108,9 +125,9 @@ class AttendanceController extends Controller
         $ana->delete();
         return "the id have been deleted ";
     }
-    public function search(attendance $Date)
+    public function search(attendance $date)
     {
         
-        return  attendance::where('name','like','%'.$Date.'%')->get();
+        return  attendance::where('Date','like','%'.$date.'%')->get();
     }
 }

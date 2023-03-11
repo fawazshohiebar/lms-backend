@@ -82,5 +82,6 @@ Route::get('/student/search/{name}', [StudentController::class, 'search']);
 Route::post('/attedance/post', [AttendanceController::class, 'store']);
 Route::get('/attendance/read', [AttendanceController::class, 'index']);
 Route::put('/attendance/edit/{id}', [AttendanceController::class, 'update']);
-Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search']);
+Route::get('/attendance/search/{date}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/delete/{id}', [AttendanceController::class, 'destroy']);
+Route::post('/attendance/take', [AttendanceController::class, 'takeAttendance']);
