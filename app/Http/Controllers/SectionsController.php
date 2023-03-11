@@ -76,6 +76,32 @@ class SectionsController extends Controller
         //
     }
 
+
+
+    public function sectiongetter($class_id)
+    {
+        $sections = Sections::where('Class_ID', $class_id)->get();
+        $sectionData = $sections->map(function ($section) {
+            return [
+                'id' => $section->id,
+                'Section_Name' => $section->Section_Name,
+                'Class_ID' => $section->Class_ID, 
+                'User_ID' => $section->User_ID, 
+            ];
+        });
+        return $sectionData;
+    }
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Update the specified resource in storage.
      *
