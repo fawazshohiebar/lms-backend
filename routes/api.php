@@ -34,6 +34,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/getuser', [AuthController::class, 'index']);
+Route::get('/user/search/{searchterm}', [AuthController::class, 'search']);
+
 
 /////////////////////
 
