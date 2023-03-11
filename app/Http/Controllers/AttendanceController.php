@@ -5,26 +5,50 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
+use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $attendance = Attendance::all(); 
-        $attendanceData = $attendance->map(function($attendance){
+        $query = $request->query();
+
+
+        // $attendances = attendance::
+        //     where('Students_ID', '=', $query['student_id'])
+        //     ->where('student','Section_ID', '=', $query['section_id'])
+        //     // ->where('Class_ID', '=', $query['class_id'])
+        //     ->get();
+
+        // $query = $request->only(['Students_ID', 'Section_ID']);
+
+        $attendances = Attendance::with('student.sections')
+            ->where('Students_ID', $query['student_id'])
+            ->whereHas('student', function ($q) use ($query) {
+                $q->where('Section_ID', $query['section_id']);
+                $q->whereHas('sections', function ($q2) use ($query) {
+                    $q2->where('Class_ID', $query['class_id']);
+                });
+            })
+
+            ->get();
+
+        $attendanceData = $attendances->map(function ($attendance) {
             return [
                 'id' => $attendance->id,
-                'Date'=> $attendance->Date,
-                'Status'=>$attendance->Status,
-                'Students_ID'=>$attendance->Students_ID,
+                'date' => $attendance->Date,
+                'status' => $attendance->Status,
+                'student_name' => $attendance->student->First_Name . ' ' . $attendance->student->Last_Name,
+                'section_name' => $attendance->student->sections->Section_Name,
+                'class_name' => $attendance->student->sections->classes->Class_Name
             ];
         });
-            return $attendance;
+        return response()->json($attendanceData);
     }
 
     /**
@@ -35,7 +59,7 @@ class AttendanceController extends Controller
     public function create()
     {
     }
-      
+
 
     /**
      * Store a newly created resource in storage.
@@ -46,11 +70,11 @@ class AttendanceController extends Controller
     public function store(StoreattendanceRequest $request)
     {
         $attendance = new attendance();
-        $attendance->Date=$request->input('Date');
-        $attendance->Status=$request->input('Status');
-        $attendance->Students_ID=$request->input('Students_ID');
+        $attendance->Date = $request->input('Date');
+        $attendance->Status = $request->input('Status');
+        $attendance->Students_ID = $request->input('Student_ID');
         $attendance->save();
-        return response()->json(['message' =>'attendance entered successfully' ]);
+        return response()->json(['message' => 'attendance entered successfully']);
     }
 
     /**
@@ -82,18 +106,18 @@ class AttendanceController extends Controller
      * @param  \App\Models\attendance  $attendance
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateattendanceRequest $request, attendance $attendance,$id)
+    public function update(UpdateattendanceRequest $request, attendance $attendance, $id)
     {
         $attendance = attendance::find($id);
         if (!$attendance) {
             return response()->json(['message' => 'attendance not found'], 404);
         }
-            $attendance->Date = $request->has('Date')? $request->input('Date'):$attendance->Date;
-            $attendance->Status = $request->has('Status')?$request->input('Status'):$attendance->Status;
-            $attendance->Students_ID = $request->has('Students_ID')?$request->input('Students_ID'):$attendance->Students_ID;
+        $attendance->Date = $request->has('Date') ? $request->input('Date') : $attendance->Date;
+        $attendance->Status = $request->has('Status') ? $request->input('Status') : $attendance->Status;
+        $attendance->Students_ID = $request->has('Students_ID') ? $request->input('Students_ID') : $attendance->Students_ID;
 
-            $attendance->save();
-            return response()->json(['message' => 'attendance updated successfully'], 200);   
+        $attendance->save();
+        return response()->json(['message' => 'attendance updated successfully'], 200);
     }
 
     /**
@@ -110,7 +134,13 @@ class AttendanceController extends Controller
     }
     public function search(attendance $Date)
     {
-        
-        return  attendance::where('name','like','%'.$Date.'%')->get();
+
+        return  attendance::where('name', 'like', '%' . $Date . '%')->get();
+    }
+
+    public function barGraphRecords(attendance $Date)
+    {
+
+        return  attendance::where();
     }
 }

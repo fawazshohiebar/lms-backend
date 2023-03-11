@@ -13,12 +13,12 @@ class student extends Model
  
 
     public function sections(){
-        return $this->belongsTo(sections::class);
+        return $this->belongsTo(sections::class, 'Section_ID');
     }
 
 
 
-    public function attendance(){
+    public function attendances(){
         return $this->HasMany(attendance::class);
     }
 
