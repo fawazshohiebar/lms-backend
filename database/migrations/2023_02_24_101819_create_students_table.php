@@ -18,7 +18,7 @@ class CreateStudentsTable extends Migration
             $table->string('First_Name');
             $table->string('Last_Name');
             $table->string('phone_number');
-            $table->string('image_path');
+            $table->string('image_path')->default('default_image.jpg');
             $table->unsignedBigInteger('Section_ID');
          
             $table->timestamps();

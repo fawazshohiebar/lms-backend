@@ -145,5 +145,44 @@ class StudentController extends Controller
         
         return  student::where('First_Name','like','%'.$name.'%')->get();
     }
+
+
+    public function studentsgetter($Section_id)
+    {
+        $students = student::where('Section_ID', $Section_id)->get();
+        $studentsData = $students->map(function ($stu) {
+            return [
+                'id' => $stu->id,
+                'First_Name' => $stu->First_Name,
+                'Last_Name' => $stu->Last_Name, 
+                'phone_number' => $stu->phone_number, 
+            ];
+        });
+        return $studentsData;
+    }
+
+
+
+    public function studentprofile($student_id)
+    {
+        $students = student::where('id', $student_id)->get();
+        $studentsData = $students->map(function ($stu) {
+            return [
+                'id' => $stu->id,
+                'First_Name' => $stu->First_Name,
+                'Last_Name' => $stu->Last_Name, 
+                'phone_number' => $stu->phone_number, 
+            ];
+        });
+        return $studentsData;
+    }
+
+
+
+
+
+
+
+
 }
 

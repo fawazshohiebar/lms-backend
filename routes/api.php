@@ -59,7 +59,7 @@ Route::get('/section/read', [SectionsController::class, 'index']);
 Route::put('/section/edit/{id}', [SectionsController::class, 'update']);
 Route::delete('/section/delete/{id}', [SectionsController::class, 'destroy']);
 Route::get('/section/search/{sec}', [SectionsController::class, 'search']);
-
+Route::get('/section/search/class/{classid}', [SectionsController::class, 'sectiongetter']);
 
 
 Route::post('/courses/post', [CoursesController::class, 'store']);
@@ -75,6 +75,8 @@ Route::post('/student/post', [StudentController::class, 'store']);
 Route::put('/student/edit/{id}', [StudentController::class, 'update']);
 Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);
 Route::get('/student/search/{name}', [StudentController::class, 'search']);
+Route::get('/student/search/section/{sectionid}', [StudentController::class, 'studentsgetter']);
+Route::get('/student/search/id/{student_id}', [StudentController::class, 'studentprofile']);
 
 Route::post('/attedance/post', [AttendanceController::class, 'store']);
 Route::get('/attendance/read', [AttendanceController::class, 'index']);
