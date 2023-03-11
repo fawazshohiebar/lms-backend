@@ -19,24 +19,27 @@ class AttendanceController extends Controller
         $query = $request->query();
 
 
-        // $attendances = attendance::
-        //     where('Students_ID', '=', $query['student_id'])
-        //     ->where('student','Section_ID', '=', $query['section_id'])
-        //     // ->where('Class_ID', '=', $query['class_id'])
-        //     ->get();
+$initialQuery = Attendance::with('student.sections');
 
-        // $query = $request->only(['Students_ID', 'Section_ID']);
+if (array_key_exists('student_id', $query)) {
+    $initialQuery->where('Students_ID', $query['student_id']);
+}
 
-        $attendances = Attendance::with('student.sections')
-            ->where('Students_ID', $query['student_id'])
-            ->whereHas('student', function ($q) use ($query) {
-                $q->where('Section_ID', $query['section_id']);
-                $q->whereHas('sections', function ($q2) use ($query) {
-                    $q2->where('Class_ID', $query['class_id']);
-                });
-            })
+if (array_key_exists('section_id', $query)) {
+    $initialQuery->whereHas('student', function ($q) use ($query) {
+        $q->where('Section_ID', $query['section_id']);
+    });
 
-            ->get();
+    if (array_key_exists('class_id', $query)) {
+        $initialQuery->whereHas('student', function ($q) use ($query) {
+            $q->whereHas('sections', function ($q2) use ($query) {
+                $q2->where('Class_ID', $query['class_id']);
+            });
+        });
+    }
+}
+
+$attendances = $initialQuery->get();
 
         $attendanceData = $attendances->map(function ($attendance) {
             return [
