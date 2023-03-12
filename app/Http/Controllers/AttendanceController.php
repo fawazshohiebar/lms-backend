@@ -19,30 +19,29 @@ class AttendanceController extends Controller
         $query = $request->query();
 
 
-$initialQuery = Attendance::with('student.sections');
+        $initialQuery = Attendance::with('student.sections');
 
-if (array_key_exists('student_id', $query)&& $query['student_id']) {
-    $initialQuery->where('Students_ID', $query['student_id']);
-}
+        if (array_key_exists('student_id', $query) && $query['student_id']) {
+            $initialQuery->where('Students_ID', $query['student_id']);
+        }
 
-if (array_key_exists('section_id', $query)&& $query['section_id']) {
-    $initialQuery->whereHas('student', function ($q) use ($query) {
-        $q->where('Section_ID', $query['section_id']);
-    });
-}
-if (array_key_exists('class_id', $query)&&$query['class_id']) {
-    $initialQuery->whereHas('student', function ($q) use ($query) {
-        $q->whereHas('sections', function ($q2) use ($query) {
-            $q2->where('Class_ID', $query['class_id']);
-        });
-    });
-}
-if (array_key_exists('date', $query)&& $query['date']) {
-    $initialQuery->whereDate('Date', $query['date']);
-   
-}
+        if (array_key_exists('section_id', $query) && $query['section_id']) {
+            $initialQuery->whereHas('student', function ($q) use ($query) {
+                $q->where('Section_ID', $query['section_id']);
+            });
+        }
+        if (array_key_exists('class_id', $query) && $query['class_id']) {
+            $initialQuery->whereHas('student', function ($q) use ($query) {
+                $q->whereHas('sections', function ($q2) use ($query) {
+                    $q2->where('Class_ID', $query['class_id']);
+                });
+            });
+        }
+        if (array_key_exists('date', $query) && $query['date']) {
+            $initialQuery->whereDate('Date', $query['date']);
+        }
 
-$attendances = $initialQuery->get();
+        $attendances = $initialQuery->get();
 
         $attendanceData = $attendances->map(function ($attendance) {
             return [
