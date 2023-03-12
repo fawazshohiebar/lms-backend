@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
+<<<<<<< HEAD
 use App\Models\student;
 use Carbon\Carbon;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+=======
+use Illuminate\Http\Request;
+
+>>>>>>> origin/Fatima
 class AttendanceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -80,6 +85,7 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
+<<<<<<< HEAD
         $attendanceData = $request->input('attendance');
 
         foreach ($attendanceData as $data) {
@@ -99,6 +105,14 @@ class AttendanceController extends Controller
         }
 
         return response()->json(['message' => 'Attendance entered successfully']);
+=======
+        $attendance = new attendance();
+        $attendance->Date = $request->input('Date');
+        $attendance->Status = $request->input('Status');
+        $attendance->Students_ID = $request->input('Student_ID');
+        $attendance->save();
+        return response()->json(['message' => 'attendance entered successfully']);
+>>>>>>> origin/Fatima
     }
 
 
@@ -132,6 +146,7 @@ class AttendanceController extends Controller
      * @param  \App\Models\attendance  $attendance
      * @return \Illuminate\Http\Response
      */
+<<<<<<< HEAD
     public function update(Request $request, $id)
     {
         $attendance = Attendance::find($id);
@@ -152,6 +167,20 @@ class AttendanceController extends Controller
             'message' => 'Attendance updated successfully',
             'attendance' => $attendance,
         ]);
+=======
+    public function update(UpdateattendanceRequest $request, attendance $attendance, $id)
+    {
+        $attendance = attendance::find($id);
+        if (!$attendance) {
+            return response()->json(['message' => 'attendance not found'], 404);
+        }
+        $attendance->Date = $request->has('Date') ? $request->input('Date') : $attendance->Date;
+        $attendance->Status = $request->has('Status') ? $request->input('Status') : $attendance->Status;
+        $attendance->Students_ID = $request->has('Students_ID') ? $request->input('Students_ID') : $attendance->Students_ID;
+
+        $attendance->save();
+        return response()->json(['message' => 'attendance updated successfully'], 200);
+>>>>>>> origin/Fatima
     }
 
     /**
@@ -170,9 +199,20 @@ class AttendanceController extends Controller
 
     public function search($date)
     {
+<<<<<<< HEAD
         $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
         $attendances = Attendance::where('Date', $formattedDate)->get();
 
         return response()->json(['attendances' => $attendances]);
+=======
+
+        return  attendance::where('name', 'like', '%' . $Date . '%')->get();
+    }
+
+    public function barGraphRecords(attendance $Date)
+    {
+
+        return  attendance::where();
+>>>>>>> origin/Fatima
     }
 }
