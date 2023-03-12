@@ -5,15 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
-<<<<<<< HEAD
-use App\Models\student;
-use Carbon\Carbon;
 use \Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-=======
-use Illuminate\Http\Request;
-
->>>>>>> origin/Fatima
 class AttendanceController extends Controller
 {
     /**
@@ -63,9 +55,6 @@ class AttendanceController extends Controller
         return response()->json($attendanceData);
     }
 
-
-
-
     /**
      * Show the form for creating a new resource.
      *
@@ -79,45 +68,20 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\x  $request
+     * @param  \App\Http\Requests\StoreattendanceRequest  $request
      * @return \Illuminate\Http\Response
      */
-
-    public function store(Request $request)
+    public function store(StoreattendanceRequest $request)
     {
-<<<<<<< HEAD
-        $attendanceData = $request->input('attendance');
-
-        foreach ($attendanceData as $data) {
-            // check if attendance record already exists for this student on this date
-            $existingAttendance = Attendance::where('Students_ID', $data['studentId'])
-                ->whereDate('Date', now()->format('Y-m-d'))
-                ->first();
-
-            if (!$existingAttendance) {
-                // create new attendance record
-                $attendance = new Attendance();
-                $attendance->Date = now()->format('Y-m-d');
-                $attendance->Status = $data['attendanceType'];
-                $attendance->Students_ID = $data['studentId'];
-                $attendance->save();
-            }
-        }
-
-        return response()->json(['message' => 'Attendance entered successfully']);
-=======
         $attendance = new attendance();
         $attendance->Date = $request->input('Date');
         $attendance->Status = $request->input('Status');
         $attendance->Students_ID = $request->input('Student_ID');
         $attendance->save();
         return response()->json(['message' => 'attendance entered successfully']);
->>>>>>> origin/Fatima
     }
 
-
     /**
-     * 
      * Display the specified resource.
      *
      * @param  \App\Models\attendance  $attendance
@@ -146,28 +110,6 @@ class AttendanceController extends Controller
      * @param  \App\Models\attendance  $attendance
      * @return \Illuminate\Http\Response
      */
-<<<<<<< HEAD
-    public function update(Request $request, $id)
-    {
-        $attendance = Attendance::find($id);
-
-        if (!$attendance) {
-            return response()->json([
-                'message' => 'Attendance not found',
-            ], 404);
-        }
-
-        if ($request->has('Status')) {
-            $attendance->Status = $request->input('Status');
-        }
-
-        $attendance->save();
-
-        return response()->json([
-            'message' => 'Attendance updated successfully',
-            'attendance' => $attendance,
-        ]);
-=======
     public function update(UpdateattendanceRequest $request, attendance $attendance, $id)
     {
         $attendance = attendance::find($id);
@@ -180,7 +122,6 @@ class AttendanceController extends Controller
 
         $attendance->save();
         return response()->json(['message' => 'attendance updated successfully'], 200);
->>>>>>> origin/Fatima
     }
 
     /**
@@ -195,16 +136,8 @@ class AttendanceController extends Controller
         $ana->delete();
         return "the id have been deleted ";
     }
-
-
-    public function search($date)
+    public function search(attendance $Date)
     {
-<<<<<<< HEAD
-        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
-        $attendances = Attendance::where('Date', $formattedDate)->get();
-
-        return response()->json(['attendances' => $attendances]);
-=======
 
         return  attendance::where('name', 'like', '%' . $Date . '%')->get();
     }
@@ -213,6 +146,5 @@ class AttendanceController extends Controller
     {
 
         return  attendance::where();
->>>>>>> origin/Fatima
     }
 }
