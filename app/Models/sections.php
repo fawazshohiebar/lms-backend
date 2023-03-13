@@ -11,7 +11,7 @@ class sections extends Model
 
 
     public function classes(){
-        return $this->belongsTo(classes::class);
+        return $this->belongsTo(classes::class, 'Class_ID');
     }
     
     public function User(){

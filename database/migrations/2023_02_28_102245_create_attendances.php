@@ -21,11 +21,7 @@ class CreateAttendances extends Migration
             
             $table->unsignedBigInteger('Students_ID'); 
           
-
-    
             $table->timestamps();
-
-
 
 
             $table->foreign('Students_ID')->references('id')->on('students');

@@ -43,7 +43,7 @@ class ClassesController extends Controller
         $class->Class_Name=$request->input('Class_Name');
       
         $class->save();
-        return response()->json(['message' => 'clas$clas created successfully'], 201);
+        return response()->json(['message' => 'class created successfully'], 201);
      
     }
 
