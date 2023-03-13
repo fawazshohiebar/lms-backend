@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
+use Carbon\Carbon;
 use \Illuminate\Http\Request;
 class AttendanceController extends Controller
 {
@@ -71,14 +72,27 @@ class AttendanceController extends Controller
      * @param  \App\Http\Requests\StoreattendanceRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreattendanceRequest $request)
+    public function store(Request $request)
     {
-        $attendance = new attendance();
-        $attendance->Date = $request->input('Date');
-        $attendance->Status = $request->input('Status');
-        $attendance->Students_ID = $request->input('Student_ID');
-        $attendance->save();
-        return response()->json(['message' => 'attendance entered successfully']);
+        $attendanceData = $request->input('attendance');
+
+        foreach ($attendanceData as $data) {
+            // check if attendance record already exists for this student on this date
+            $existingAttendance = Attendance::where('Students_ID', $data['studentId'])
+                ->whereDate('Date', now()->format('Y-m-d'))
+                ->first();
+
+            if (!$existingAttendance) {
+                // create new attendance record
+                $attendance = new Attendance();
+                $attendance->Date = now()->format('Y-m-d');
+                $attendance->Status = $data['attendanceType'];
+                $attendance->Students_ID = $data['studentId'];
+                $attendance->save();
+            }
+        }
+
+        return response()->json(['message' => 'Attendance entered successfully']);
     }
 
     /**
@@ -110,18 +124,18 @@ class AttendanceController extends Controller
      * @param  \App\Models\attendance  $attendance
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateattendanceRequest $request, attendance $attendance, $id)
+    public function update(UpdateattendanceRequest $request, attendance $attendance,$id)
     {
         $attendance = attendance::find($id);
         if (!$attendance) {
             return response()->json(['message' => 'attendance not found'], 404);
         }
-        $attendance->Date = $request->has('Date') ? $request->input('Date') : $attendance->Date;
-        $attendance->Status = $request->has('Status') ? $request->input('Status') : $attendance->Status;
-        $attendance->Students_ID = $request->has('Students_ID') ? $request->input('Students_ID') : $attendance->Students_ID;
+            $attendance->Date = $request->has('Date')? $request->input('Date'):$attendance->Date;
+            $attendance->Status = $request->has('Status')?$request->input('Status'):$attendance->Status;
+            $attendance->Students_ID = $request->has('Students_ID')?$request->input('Students_ID'):$attendance->Students_ID;
 
-        $attendance->save();
-        return response()->json(['message' => 'attendance updated successfully'], 200);
+            $attendance->save();
+            return response()->json(['message' => 'attendance updated successfully'], 200);   
     }
 
     /**
@@ -136,11 +150,21 @@ class AttendanceController extends Controller
         $ana->delete();
         return "the id have been deleted ";
     }
-    public function search(attendance $Date)
-    {
 
-        return  attendance::where('name', 'like', '%' . $Date . '%')->get();
+
+
+    
+    public function search($date)
+    {
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
+        $attendances = Attendance::where('Date', $formattedDate)->get();
+
+        return response()->json(['attendances' => $attendances]);
     }
+
+
+
+
 
     public function barGraphRecords(attendance $Date)
     {
