@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use App\Models\student;
-
+use Illuminate\Support\Facades\DB;
+use \Illuminate\Http\Request;
 class StudentController extends Controller
 {
     /**
@@ -177,6 +178,142 @@ class StudentController extends Controller
         return $studentsData;
     }
 
+
+
+
+
+
+
+
+
+
+
+    // public function searches(Request $request)
+    // {
+    //     $query = $request->query();
+
+
+    //     $initialQuery = student::with('students.Section_ID');
+
+    //     if (array_key_exists('student_id', $query) && $query['student_id']) {
+    //         $initialQuery->where('Students_ID', $query['student_id']);
+    //     }
+
+    //     if (array_key_exists('section_id', $query) && $query['section_id']) {
+    //         $initialQuery->whereHas('student', function ($q) use ($query) {
+    //             $q->where('Section_ID', $query['section_id']);
+    //         });
+    //     }
+    //     if (array_key_exists('class_id', $query) && $query['class_id']) {
+    //         $initialQuery->whereHas('student', function ($q) use ($query) {
+    //             $q->whereHas('sections', function ($q2) use ($query) {
+    //                 $q2->where('Class_ID', $query['class_id']);
+    //             });
+    //         });
+    //     }
+       
+
+    //     $attendances = $initialQuery->get();
+
+    //     $attendanceData = $attendances->map(function ($attendance) {
+    //         return [
+    //             'id' => $attendance->id,
+    //             'student_name' => $attendance->student->First_Name . ' ' . $attendance->student->Last_Name,
+    //             'section_name' => $attendance->student->sections->Section_Name,
+    //             'class_name' => $attendance->student->sections->classes->Class_Name
+    //         ];
+    //     });
+    //     return response()->json($attendanceData);
+    // }
+
+
+
+
+
+
+        // public function searches(Request $request)
+        // {
+        //     $classId = $request->input('class_id');
+        //     $sectionId = $request->input('section_id');
+    
+        //     $students = Student::where('Class_ID', $classId)
+        //                 ->where('Section_ID', $sectionId)
+        //                 ->get();
+    
+        //     return response()->json($students);
+        // }
+    
+    
+
+
+
+        // public function joinn()
+        // {
+        //     $results = DB::table('classes')
+        //                 ->join('sections', 'classes.id', '=', 'sections.Class_ID')
+        //                 ->join('students', 'sections.id', '=', 'students.Section_ID')
+        //                 ->select('classes.Class_Name', 'sections.Section_Name', 'students.First_Name', 'students.Last_Name')
+        //                 ->get();
+    
+        //     return view('my_view', ['results' => $results]);
+        // }
+
+
+        public function searches()
+        {
+            
+            $data = DB::table('students')
+                        ->join('sections', 'students.Section_ID', '=', 'sections.id')
+                        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+                        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+                        ->get();
+                        return response()->json([
+                            
+                            'data' => $data,
+                        ]);
+                    }
+
+
+
+
+                    public function studensearch($id)
+{
+    $data = DB::table('students')
+        ->join('sections', 'students.Section_ID', '=', 'sections.id')
+        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+        ->where('students.id', $id)
+        ->get();
+        
+    return response()->json([
+        'data' => $data,
+    ]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+public function studentsearchbysection($id)
+{
+    $data = DB::table('students')
+        ->join('sections', 'students.Section_ID', '=', 'sections.id')
+        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+        ->where('sections.id', $id)
+        ->get();
+        
+    return response()->json([
+        'data' => $data,
+    ]);
+}
 
 
 

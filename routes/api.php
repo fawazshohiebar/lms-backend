@@ -80,6 +80,9 @@ Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);
 Route::get('/student/search/{name}', [StudentController::class, 'search']);
 Route::get('/student/search/section/{sectionid}', [StudentController::class, 'studentsgetter']);
 Route::get('/student/search/id/{student_id}', [StudentController::class, 'studentprofile']);
+Route::get('/students', [StudentController::class, 'searches']);
+Route::get('/students/{id}', [StudentController::class, 'studensearch']);
+Route::get('/students/sec/{id}', [StudentController::class, 'studentsearchbysection']);
 
 Route::post('/attendance', [AttendanceController::class, 'store']);
 Route::get('/attendance', [AttendanceController::class, 'index']);
