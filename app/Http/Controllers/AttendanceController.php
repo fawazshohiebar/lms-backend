@@ -109,6 +109,33 @@ class AttendanceController extends Controller
     }
 
 
+    public function frequentlyAbsentStudents(Request $request)
+    {
+        $query = $request->query();
+
+        $initialQuery = Attendance::with(['student'])
+            ->join('students', 'students.id', '=', 'attendances.Students_ID')
+            ->join('sections', 'sections.id', '=', 'students.Section_ID')
+            ->join('classes', 'classes.id', '=', 'sections.Class_ID')
+            ->select('students.id', 'students.First_Name', 'students.Last_Name', 'attendances.Status', attendance::raw('count(*) as count'))
+            ->where('attendances.status', 'Absent')
+            ->having('count', '>', '2')
+            ->groupBy('students.id', 'attendances.Status');
+
+        if (array_key_exists('class_id', $query) && $query['class_id']) {
+            $initialQuery->whereHas('student', function ($q) use ($query) {
+                $q->whereHas('sections', function ($q2) use ($query) {
+                    $q2->where('Class_ID', $query['class_id']);
+                });
+            });
+        }
+
+        $frequentlyAbsentStudents = $initialQuery->get();
+
+        return response()->json($frequentlyAbsentStudents);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *

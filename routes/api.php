@@ -82,6 +82,6 @@ Route::put('/attendance/{id}', [AttendanceController::class, 'update']);
 Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
 
-
 Route::get('/attendance/dashboard',[AttendanceController::class,'dashBoard']);
 Route::get('/attendance/dashboard/piechart',[AttendanceController::class,'dashBoardPiechart']);
+Route::get('/attendance/dashboard/frequent',[AttendanceController::class,'frequentlyAbsentStudents']);
