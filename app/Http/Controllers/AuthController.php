@@ -13,16 +13,55 @@ use Illuminate\Support\Facades\log;
 
 class AuthController extends Controller
 {
-    public function index()
+    public function index($id = null)
     {
-        
-        return  User::all();
-       
+        if ($id === null) {
+            return User::all();
+        } else {
+            return User::find($id);
+        }
     }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response(['message' => 'User not found'], 404);
+        }
+
+        $user->delete();
+
+        return response(['message' => 'User deleted successfully']);
+    }
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response(['message' => 'User not found'], 404);
+        }
+
+        $fields = $request->validate([
+            'Role' => 'string',
+            'Email' => 'string|unique:users,Email,' . $id,
+            'Password' => 'string|confirmed',
+            'Full_name' => 'string',
+        ]);
+
+        if (isset($fields['Password'])) {
+            $fields['Password'] = bcrypt($fields['Password']);
+        }
+
+        $user->update($fields);
+
+        return response(['message' => 'User updated successfully']);
+    }
+
     public function search($searchterm)
     {
-        
-        return  User::where('Role','like','%'.$searchterm.'%')->get();
+
+        return  User::where('Role', 'like', '%' . $searchterm . '%')->get();
     }
     public function register(Request $request)
     {
@@ -47,7 +86,7 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-    
+
 
         return response($response, 201);
     }
@@ -70,23 +109,22 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ];
-        
+
         return $response;
     }
     public function logout(Request $request)
     {
-        if( !( $request->user()->currentAccessToken())){
+        if (!($request->user()->currentAccessToken())) {
             return [
                 'message' => 'no user logged in'
             ];
-        }
-        else{
-        $request->user()->currentAccessToken()->delete();
-       
+        } else {
+            $request->user()->currentAccessToken()->delete();
 
-        return [
-            'message' => 'logged out'
-        ];
-    }
+
+            return [
+                'message' => 'logged out'
+            ];
+        }
     }
 }
