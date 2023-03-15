@@ -94,4 +94,5 @@ Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search'])
 Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
 
 
-Route::get('/attendance/bar-graph-records',[AttendanceController::class,'barGraphRecords']);
+Route::get('/attendance/dashboard',[AttendanceController::class,'dashBoard']);
+Route::get('/attendance/dashboard/piechart',[AttendanceController::class,'dashBoardPiechart']);

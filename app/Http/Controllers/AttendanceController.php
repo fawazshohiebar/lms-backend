@@ -6,7 +6,10 @@ use App\Http\Requests\StoreattendanceRequest;
 use App\Http\Requests\UpdateattendanceRequest;
 use App\Models\attendance;
 use Carbon\Carbon;
+use App\Models\classes;
+
 use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 class AttendanceController extends Controller
 {
     /**
@@ -55,6 +58,56 @@ class AttendanceController extends Controller
         });
         return response()->json($attendanceData);
     }
+
+    public function dashBoard(Request $request)
+
+    {
+        // $query = $request->query();
+        $classAttendanceCounts = Attendance::with(['student' => function ($query) {
+            $query->select('id', 'Section_ID');
+        }])
+            ->join('students', 'students.id', '=', 'attendances.Students_ID')
+            ->join('sections', 'sections.id', '=', 'students.Section_ID')
+            ->join('classes', 'classes.id', '=', 'sections.Class_ID')
+            ->select('classes.id', 'classes.Class_Name', 'attendances.Status', attendance::raw('count(*) as count'))
+            ->groupBy('classes.id', 'classes.Class_Name', 'attendances.Status')
+            ->get();
+        $statistics = [];
+        //class_name:key and the status:value "[]" they do push to the array
+        //example: $statistic['class 1'] [] = [ 'absent' => 4]
+        foreach ($classAttendanceCounts as $record) {
+            $statistics[$record['Class_Name']][$record['Status']] = $record['count'];
+        }
+
+
+        return response()->json($statistics);
+    }
+
+    public function dashBoardPiechart(Request $request)
+    {
+
+        $attendanceCounts = DB::table('attendances')
+            ->select(DB::raw('COUNT(*) as count, status'))
+            ->groupBy('status')
+            ->get();
+        $chartData = [
+            [
+                'label' => 'Present',
+                'value' => $attendanceCounts->where('status', 'present')->first()->count
+            ],
+            [
+                'label' => 'Late',
+                'value' => $attendanceCounts->where('status', 'late')->first()->count
+            ],
+            [
+                'label' => 'Absent',
+                'value' => $attendanceCounts->where('status', 'absent')->first()->count
+            ]
+        ];
+
+        return response()->json($chartData);
+    }
+
 
     /**
      * Show the form for creating a new resource.
