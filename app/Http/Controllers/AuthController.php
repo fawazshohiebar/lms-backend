@@ -34,30 +34,7 @@ class AuthController extends Controller
 
         return response(['message' => 'User deleted successfully']);
     }
-    public function update(Request $request, $id)
-    {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response(['message' => 'User not found'], 404);
-        }
-
-        $fields = $request->validate([
-            'Role' => 'string',
-            'Email' => 'string|unique:users,Email,' . $id,
-            'Password' => 'string|confirmed',
-            'Full_name' => 'string',
-        ]);
-
-        if (isset($fields['Password'])) {
-            $fields['Password'] = bcrypt($fields['Password']);
-        }
-
-        $user->update($fields);
-
-        return response(['message' => 'User updated successfully']);
-    }
-
+ 
     public function search($searchterm)
     {
 
@@ -90,6 +67,35 @@ class AuthController extends Controller
 
         return response($response, 201);
     }
+    public function update(Request $request, $id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response(['message' => 'User not found'], 404);
+    }
+
+    $fields = $request->validate([
+        'Role' => 'string',
+        'Email' => 'string|unique:admins,Email,'.$user->id,
+        'Password' => 'string|confirmed',
+        'Full_name' => 'string',
+    ]);
+
+    // Update the user with the validated fields
+    $user->Role = isset($fields['Role']) ? $fields['Role'] : $user->Role;
+    $user->Email = isset($fields['Email']) ? $fields['Email'] : $user->Email;
+    $user->Full_name = isset($fields['Full_name']) ? $fields['Full_name'] : $user->Full_name;
+
+    if (isset($fields['Password'])) {
+        $user->Password = bcrypt($fields['Password']);
+    }
+
+    $user->save();
+
+    return response(['message' => 'User updated successfully', 'user' => $user]);
+}
+
 
     public function login(Request $request)
     {
