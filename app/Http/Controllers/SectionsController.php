@@ -116,4 +116,10 @@ class SectionsController extends Controller
         
         return  sections::where('name','like','%'.$class.'%')->get();
     }
+
+    public function getClassSections($classId)
+{
+    $sections = Section::where('Class_ID', $classId)->get();
+    return response()->json(['sections' => $sections]);
+}
 }

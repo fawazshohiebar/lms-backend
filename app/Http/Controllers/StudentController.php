@@ -51,6 +51,7 @@ class StudentController extends Controller
         $student->First_Name = $request->input('First_Name');
         $student->Last_Name = $request->input('Last_Name');
         $student->phone_number = $request->input('phone_number');
+       
     
         // handle file upload
         if ($request->hasFile('image_path')) {
@@ -62,8 +63,11 @@ class StudentController extends Controller
     
         $student->Section_ID = $request->input('Section_ID');
         $student->save();
+      
         return response()->json(['message' => 'student entered successfully']);
+        log::info($student);
     }
+
     
     /**
      * Display the specified resource.

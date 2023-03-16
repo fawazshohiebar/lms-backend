@@ -22,13 +22,14 @@ class AuthController extends Controller
             'Password' => 'required|string|confirmed',
             'Full_name' => 'required|string',
         ]);
+        log::info($fields);
         $user = User::create([
             'Role' => $fields['Role'],
             'Email' => $fields['Email'],
             'Full_name' => $fields['Full_name'],
             'Password' => bcrypt($fields['Password'])
         ]);
-
+        log::info($user);
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         $response = [
