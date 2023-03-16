@@ -22,9 +22,9 @@ use GuzzleHttp\Middleware;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 // Protected Route
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -34,7 +34,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/getuser', [AuthController::class, 'index']);
+Route::get('/getuser', [AuthController::class, 'index']);
+Route::get('/getuser/{id}', [AuthController::class, 'index']);
+Route::put('/user/{id}', [AuthController::class, 'update']);
+Route::delete('/user/{id}', [AuthController::class, 'destroy']);
 Route::get('/user/search/{searchterm}', [AuthController::class, 'search']);
 
 
@@ -90,5 +93,7 @@ Route::put('/attendance/{id}', [AttendanceController::class, 'update']);
 Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
 
+Route::get('/attendance/dashboard',[AttendanceController::class,'dashBoard']);
+Route::get('/attendance/dashboard/piechart',[AttendanceController::class,'dashBoardPiechart']);
+Route::get('/attendance/dashboard/frequent',[AttendanceController::class,'frequentlyAbsentStudents']);
 
-Route::get('/attendance/bar-graph-records',[AttendanceController::class,'barGraphRecords']);
