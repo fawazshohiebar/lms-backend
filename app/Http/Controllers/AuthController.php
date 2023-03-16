@@ -97,27 +97,32 @@ class AuthController extends Controller
 }
 
 
-    public function login(Request $request)
-    {
-        $fields = $request->validate([
+public function login(Request $request)
+{
+    $fields = $request->validate([
+        'Email' => 'required|string',
+        'Password' => 'required|string',
+    ]);
 
-            'Email' => 'required|string',
-            'Password' => 'required|string',
-        ]);
-        $user = User::where('Email', $fields['Email'])->first();
+    $user = User::where('Email', $fields['Email'])->first();
 
-        $token = null;
-
-        if ($user && Hash::check($fields['Password'], $user->Password) == 1)
-            $token = $user->createToken('myapptoken')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return $response;
+    if (!$user || !Hash::check($fields['Password'], $user->Password)) {
+        // Invalid credentials
+        return response([
+            'message' => 'The provided credentials are incorrect.'
+        ], 401);
     }
+
+    $token = $user->createToken('myapptoken')->plainTextToken;
+
+    $response = [
+        'user' => $user,
+        'token' => $token
+    ];
+
+    return response($response);
+}
+
     public function logout(Request $request)
     {
         if (!($request->user()->currentAccessToken())) {
