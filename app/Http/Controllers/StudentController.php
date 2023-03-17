@@ -19,24 +19,20 @@ class StudentController extends Controller
     {
         $query = $request->query();
 
-
-        $initialQuery = student::query();
+        $initialQuery = Student::query()
+            ->join('sections', 'sections.id', '=', 'students.Section_ID')
+            ->join('classes', 'classes.id', '=', 'sections.Class_ID')
+            ->select('students.id', 'students.First_Name', 'students.Last_Name', 'students.phone_number', 'students.image_path', 'students.Section_ID', 'sections.Section_Name', 'sections.Class_ID', 'classes.Class_Name');
 
         if (array_key_exists('section_id', $query) && $query['section_id']) {
-            $initialQuery->where('Section_ID', $query['section_id']);
+            $initialQuery->where('students.Section_ID', $query['section_id']);
         }
 
-        $studentData = $initialQuery->get()->map(function ($student) {
-            return [
-                'id' => $student->id,
-                'First_Name' => $student->First_Name,
-                'Last_Name' => $student->Last_Name,
-                'phone_number' => $student->phone_number,
-                'image_path' => $student->image_path,
-                'Section_ID' => $student->Section_ID,
-            ];
-        });
-        return response()->json($studentData);
+        if (array_key_exists('class_id', $query) && $query['class_id']) {
+            $initialQuery->where('sections.Class_ID', $query['class_id']);
+        }
+
+        return response()->json($initialQuery->get());
     }
 
     /**
