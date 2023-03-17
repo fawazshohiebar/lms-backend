@@ -13,9 +13,10 @@ class SectionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(string $class_id)
     {
-        $sections = sections::all();
+
+        $sections = Sections::where('Class_ID', $class_id)->get();
         $sectionData = $sections->map(function ($sections) {
             return [
                 'id' => $sections->id,
@@ -24,7 +25,7 @@ class SectionsController extends Controller
                 'User_ID' => $sections->User_ID, 
             ];
         });
-        return $sections;
+        return $sectionData;
     }
 
     /**
@@ -51,7 +52,6 @@ class SectionsController extends Controller
         $sections->User_ID=$request->input('User_ID');
         $sections->save();
         return response()->json(['message' => 'sections created successfully'], 201);
-     
     }
 
     /**

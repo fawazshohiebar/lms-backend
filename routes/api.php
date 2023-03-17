@@ -61,12 +61,13 @@ Route::get('/classes/search/{class}', [ClassesController::class, 'search']);
 
 
 Route::post('/section/post', [SectionsController::class, 'store']);
-Route::get('/section/read', [SectionsController::class, 'index']);
+// Route::get('/section/read', [SectionsController::class, 'index']);
 Route::put('/section/edit/{id}', [SectionsController::class, 'update']);
 Route::delete('/section/delete/{id}', [SectionsController::class, 'destroy']);
 Route::get('/section/search/{sec}', [SectionsController::class, 'search']);
 Route::get('/section/search/class/{classid}', [SectionsController::class, 'sectiongetter']);
 
+Route::get('/classes/{classId}/sections', [SectionsController::class, 'index']);
 
 Route::post('/courses/post', [CoursesController::class, 'store']);
 Route::get('/courses/read', [CoursesController::class, 'index']);
@@ -75,7 +76,7 @@ Route::delete('/courses/delete/{id}', [CoursesController::class, 'destroy']);
 Route::get('/courses/search/{cname}', [CoursesController::class, 'search']);
 
 
-Route::get('/student/read', [StudentController::class, 'index']);
+// Route::get('/students', [StudentController::class, 'index']);
 
 Route::post('/student/post', [StudentController::class, 'store']);
 Route::put('/student/edit/{id}', [StudentController::class, 'update']);
@@ -83,7 +84,7 @@ Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);
 Route::get('/student/search/{name}', [StudentController::class, 'search']);
 Route::get('/student/search/section/{sectionid}', [StudentController::class, 'studentsgetter']);
 Route::get('/student/search/id/{student_id}', [StudentController::class, 'studentprofile']);
-Route::get('/students', [StudentController::class, 'searches']);
+Route::get('/students', [StudentController::class, 'index']);
 Route::get('/students/{id}', [StudentController::class, 'studensearch']);
 Route::get('/students/sec/{id}', [StudentController::class, 'studentsearchbysection']);
 
