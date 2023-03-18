@@ -29,7 +29,6 @@ use GuzzleHttp\Middleware;
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-
 });
 /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
@@ -53,27 +52,25 @@ Route::get('/admin/search/{searchterm}', [AdminController::class, 'search']);
 
 Route::post('/classes', [ClassesController::class, 'store']);
 Route::get('/classes', [ClassesController::class, 'index']);
-Route::put('/classes/{id}', [ClassesController::class, 'update']);
-Route::delete('/classes/{id}', [ClassesController::class, 'destroy']);
-Route::get('/classes/{class}', [ClassesController::class, 'search']);
+Route::put('/classes/{classId}', [ClassesController::class, 'update']);
+Route::delete('/classes/{classId}', [ClassesController::class, 'destroy']);
+Route::get('/classes/{classId}', [ClassesController::class, 'search']);
 
 
 
-
-Route::post('/sections', [SectionsController::class, 'store']);
-// Route::get('/section/read', [SectionsController::class, 'index']);
-Route::put('/sections/{id}', [SectionsController::class, 'update']);
-Route::delete('/sections/{id}', [SectionsController::class, 'destroy']);
-Route::get('/sections/{sec}', [SectionsController::class, 'search']);
-Route::get('/sections/classes/{classid}', [SectionsController::class, 'sectiongetter']);
 
 Route::get('/classes/{classId}/sections', [SectionsController::class, 'index']);
+Route::post('/classes/{classId}/sections', [SectionsController::class, 'store']);
+Route::get('/sections/{sectionId}', [SectionsController::class, 'search']);
+Route::put('/sections/{sectionId}', [SectionsController::class, 'update']);
+Route::delete('/sections/{sectionId}', [SectionsController::class, 'destroy']);
 
-Route::post('/courses/post', [CoursesController::class, 'store']);
-Route::get('/courses/read', [CoursesController::class, 'index']);
-Route::put('/courses/edit/{id}', [CoursesController::class, 'update']);
-Route::delete('/courses/delete/{id}', [CoursesController::class, 'destroy']);
-Route::get('/courses/search/{cname}', [CoursesController::class, 'search']);
+
+Route::get('/courses', [CoursesController::class, 'index']);
+Route::post('/courses', [CoursesController::class, 'store']);
+Route::get('/courses/{coursesId}', [CoursesController::class, 'search']);
+Route::put('/courses/{coursesId}', [CoursesController::class, 'update']);
+Route::delete('/courses/{coursesId}', [CoursesController::class, 'destroy']);
 
 
 // Route::get('/students', [StudentController::class, 'index']);
@@ -94,7 +91,6 @@ Route::put('/attendance/{id}', [AttendanceController::class, 'update']);
 Route::get('/attendance/search/{Date}', [AttendanceController::class, 'search']);
 Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
 
-Route::get('/attendance/dashboard',[AttendanceController::class,'dashBoard']);
-Route::get('/attendance/dashboard/piechart',[AttendanceController::class,'dashBoardPiechart']);
-Route::get('/attendance/dashboard/frequent',[AttendanceController::class,'frequentlyAbsentStudents']);
-
+Route::get('/attendance/dashboard', [AttendanceController::class, 'dashBoard']);
+Route::get('/attendance/dashboard/piechart', [AttendanceController::class, 'dashBoardPiechart']);
+Route::get('/attendance/dashboard/frequent', [AttendanceController::class, 'frequentlyAbsentStudents']);

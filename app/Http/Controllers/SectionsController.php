@@ -5,27 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoresectionsRequest;
 use App\Http\Requests\UpdatesectionsRequest;
 use App\Models\sections;
+use PhpParser\Node\Expr\Cast\String_;
 
 class SectionsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(string $class_id)
     {
+        $sections = sections::query()
+            ->leftjoin('students', 'students.Section_ID', '=', 'sections.id')
+            ->select('sections.id', 'sections.Section_Name', 'sections.Class_ID', sections::raw('count(students.id) as studentsCount'))
+            ->where('Class_ID', $class_id)
+            ->groupBy('sections.id')
+            ->get();
 
-        $sections = Sections::where('Class_ID', $class_id)->get();
-        $sectionData = $sections->map(function ($sections) {
-            return [
-                'id' => $sections->id,
-                'Section_Name' => $sections->Section_Name,
-                'Class_ID' => $sections->Class_ID, 
-                'User_ID' => $sections->User_ID, 
-            ];
-        });
-        return $sectionData;
+        return response()->json($sections);
     }
 
     /**
@@ -44,12 +42,12 @@ class SectionsController extends Controller
      * @param  \App\Http\Requests\StoresectionsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoresectionsRequest $request)
+    public function store(String $classId, StoresectionsRequest $request)
     {
         $sections = new sections();
-        $sections->Section_Name=$request->input('Section_Name');
-        $sections->Class_ID=$request->input('Class_ID');
-        $sections->User_ID=$request->input('User_ID');
+        $sections->Section_Name = $request->input('Section_Name');
+        $sections->Class_ID = $classId;
+        $sections->User_ID = $request->input('User_ID');
         $sections->save();
         return response()->json(['message' => 'sections created successfully'], 201);
     }
@@ -85,8 +83,8 @@ class SectionsController extends Controller
             return [
                 'id' => $section->id,
                 'Section_Name' => $section->Section_Name,
-                'Class_ID' => $section->Class_ID, 
-                'User_ID' => $section->User_ID, 
+                'Class_ID' => $section->Class_ID,
+                'User_ID' => $section->User_ID,
             ];
         });
         return $sectionData;
@@ -109,13 +107,13 @@ class SectionsController extends Controller
      * @param  \App\Models\sections  $sections
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatesectionsRequest $request, sections $sections,$id)
+    public function update(UpdatesectionsRequest $request, sections $sections, $id)
     {
         $sections = sections::find($id);
         if (!$sections) {
             return response()->json(['message' => 'sect$sections not found'], 404);
         }
-        $sections->Section_Name = $request->has('Section_Name')? $request->input('Section_Name'):$sections->Section_Name;
+        $sections->Section_Name = $request->has('Section_Name') ? $request->input('Section_Name') : $sections->Section_Name;
         // $sections->Class_ID = $request->has('Class_ID')?$request->input('Class_ID'):$sections->Class_ID;
         // $sections->Admin_ID = $request->has('Admin_ID')?$request->input('Admin_ID'):$sections->Admin_ID;
         $sections->save();
@@ -137,9 +135,9 @@ class SectionsController extends Controller
     }
 
 
-    public function search( $class)
+    public function search($class)
     {
-        
-        return  sections::where('name','like','%'.$class.'%')->get();
+
+        return  sections::where('name', 'like', '%' . $class . '%')->get();
     }
 }

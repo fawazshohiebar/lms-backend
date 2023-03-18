@@ -11,14 +11,17 @@ class ClassesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $classess = classes::all();
-    
-        
-        return $classess;
+        $classes = classes::query()
+            ->leftjoin('sections', 'sections.Class_ID', '=', 'classes.id')
+            ->select('classes.id', 'classes.Class_Name', classes::raw('count(sections.id) as sectionsCount'))
+            ->groupBy('classes.id')
+            ->get();
+
+        return response()->json($classes);
     }
 
     /**
@@ -40,11 +43,10 @@ class ClassesController extends Controller
     public function store(StoreclassesRequest $request)
     {
         $class = new classes();
-        $class->Class_Name=$request->input('Class_Name');
-      
+        $class->Class_Name = $request->input('Class_Name');
+
         $class->save();
         return response()->json(['message' => 'class created successfully'], 201);
-     
     }
 
     /**
@@ -76,17 +78,16 @@ class ClassesController extends Controller
      * @param  \App\Models\classes  $classes
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateclassesRequest $request, classes $classes ,$id)
+    public function update(UpdateclassesRequest $request, classes $classes, $id)
     {
         $clas = classes::find($id);
         if (!$clas) {
             return response()->json(['message' => 'clas not found'], 404);
         }
-        $clas->Class_Name = $request->has('Class_Name')? $request->input('Class_Name'):$clas->Class_Name;
-       
+        $clas->Class_Name = $request->has('Class_Name') ? $request->input('Class_Name') : $clas->Class_Name;
+
         $clas->save();
         return response()->json(['message' => 'clasess updated successfully'], 200);
-    
     }
 
     /**
@@ -95,15 +96,15 @@ class ClassesController extends Controller
      * @param  \App\Models\classes  $classes
      * @return \Illuminate\Http\Response
      */
-    public function destroy(classes $request,$id)
+    public function destroy(classes $request, $id)
     {
         $ana = classes::find($id);
-            $ana->delete();
-            return "the id have been deleted ";
+        $ana->delete();
+        return "the id have been deleted ";
     }
     public function search($class)
     {
-        
-        return  classes::where('name','like','%'.$class.'%')->get();
+
+        return  classes::where('name', 'like', '%' . $class . '%')->get();
     }
 }
