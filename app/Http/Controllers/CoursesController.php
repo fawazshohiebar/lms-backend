@@ -11,20 +11,18 @@ class CoursesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(String $section_id)
     {
-        $course = courses::all();
-        $courseData = $course->map(function ($course) {
-            return [
-                'id' => $course->id,
-                'Course_Name' => $course->Course_Name,
-                'Section_ID' => $course->Section_ID,
 
-            ];
-        });
-        return $course;
+        $courses = courses::query()
+            ->leftjoin('sections', 'courses.Section_ID', '=', 'sections.id')
+            ->select('courses.id', 'courses.Course_Name', 'sections.Section_Name')
+            ->where('Section_ID', $section_id)
+            ->get();
+
+        return response()->json($courses);
     }
 
     /**
@@ -100,7 +98,7 @@ class CoursesController extends Controller
      * @param  \App\Models\courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function destroy(courses $courses , $id)
+    public function destroy(courses $courses, $id)
     {
         $ana = courses::find($id);
         $ana->delete();

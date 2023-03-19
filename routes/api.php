@@ -71,6 +71,7 @@ Route::post('/courses', [CoursesController::class, 'store']);
 Route::get('/courses/{coursesId}', [CoursesController::class, 'search']);
 Route::put('/courses/{coursesId}', [CoursesController::class, 'update']);
 Route::delete('/courses/{coursesId}', [CoursesController::class, 'destroy']);
+Route::get('/sections/{sectionId}/courses',[CoursesController::class, 'index']);
 
 
 // Route::get('/students', [StudentController::class, 'index']);
