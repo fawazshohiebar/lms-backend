@@ -15,10 +15,13 @@ class ClassesController extends Controller
      */
     public function index()
     {
-        $classess = classes::all();
-    
-        
-        return $classess;
+        $classes = classes::query()
+    ->leftjoin('sections', 'sections.Class_ID', '=', 'classes.id')
+    ->select('classes.id', 'classes.Class_Name', classes::raw('count(sections.id) as sectionsCount'))
+    ->groupBy('classes.id', 'classes.Class_Name')
+    ->get();
+
+    return response()->json($classes);
     }
 
     /**
