@@ -40,7 +40,7 @@ Route::delete('/user/{id}', [AuthController::class, 'destroy']);
 Route::get('/user/search/{searchterm}', [AuthController::class, 'search']);
 
 
-/////////////////////
+///////////////////////
 
 
 Route::post('/admin/post', [AdminController::class, 'store']);
