@@ -170,10 +170,15 @@ class AttendanceController extends Controller
                 $attendance->Status = $data['attendanceType'];
                 $attendance->Students_ID = $data['studentId'];
                 $attendance->save();
+        return response()->json(['message' => 'Attendance entered successfully']);
+
             }
+            else{
+            //already taken
+        return response()->json(['message' => 'Attendance already taken']);
+    }
         }
 
-        return response()->json(['message' => 'Attendance entered successfully']);
     }
 
     /**
