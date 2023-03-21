@@ -173,10 +173,10 @@ class AttendanceController extends Controller
         return response()->json(['message' => 'Attendance entered successfully']);
 
             }
-            else
+            else{
             //already taken
         return response()->json(['message' => 'Attendance already taken']);
-
+    }
         }
 
     }
