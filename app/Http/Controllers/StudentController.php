@@ -7,27 +7,32 @@ use App\Http\Requests\UpdatestudentRequest;
 use App\Models\student;
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Http\Request;
+
 class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $student = student::all();
-        $studentData = $student->map(function($student){
-            return [
-                'id' => $student->id,
-                'First_Name'=> $student->First_Name,
-                'Last_Name'=>$student->Last_Name,
-                'phone_number'=>$student->phone_number,
-                'image_path'=>$student->image_path,
-                'Section_ID'=>$student->Section_ID,
-            ];
-        });
-            return $student;
+        $query = $request->query();
+
+        $initialQuery = Student::query()
+            ->join('sections', 'sections.id', '=', 'students.Section_ID')
+            ->join('classes', 'classes.id', '=', 'sections.Class_ID')
+            ->select('students.id', 'students.First_Name', 'students.Last_Name', 'students.phone_number', 'students.image_path', 'students.Section_ID', 'sections.Section_Name', 'sections.Class_ID', 'classes.Class_Name');
+
+        if (array_key_exists('section_id', $query) && $query['section_id']) {
+            $initialQuery->where('students.Section_ID', $query['section_id']);
+        }
+
+        if (array_key_exists('class_id', $query) && $query['class_id']) {
+            $initialQuery->where('sections.Class_ID', $query['class_id']);
+        }
+
+        return response()->json($initialQuery->get());
     }
 
     /**
@@ -52,7 +57,7 @@ class StudentController extends Controller
         $student->First_Name = $request->input('First_Name');
         $student->Last_Name = $request->input('Last_Name');
         $student->phone_number = $request->input('phone_number');
-    
+
         // handle file upload.
         if ($request->hasFile('image_path')) {
             $file = $request->file('image_path');
@@ -60,12 +65,12 @@ class StudentController extends Controller
             $file->move(public_path('uploads'), $filename);
             $student->image_path = 'uploads/' . $filename;
         }
-    
+
         $student->Section_ID = $request->input('Section_ID');
         $student->save();
         return response()->json(['message' => 'student entered successfully']);
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -101,11 +106,11 @@ class StudentController extends Controller
         if (!$student) {
             return response()->json(['message' => 'student not found'], 404);
         }
-    
+
         $student->First_Name = $request->has('First_Name') ? $request->input('First_Name') : $student->First_Name;
         $student->Last_Name = $request->has('Last_Name') ? $request->input('Last_Name') : $student->Last_Name;
         $student->phone_number = $request->has('phone_number') ? $request->input('phone_number') : $student->phone_number;
-    
+
         // handle file upload
         if ($request->hasFile('image_path')) {
             $file = $request->file('image_path');
@@ -115,12 +120,12 @@ class StudentController extends Controller
         } else {
             $student->image_path = $request->has('image_path') ? $request->input('image_path') : $student->image_path;
         }
-    
+
         $student->Section_ID = $request->has('Section_ID') ? $request->input('Section_ID') : $student->Section_ID;
         $student->save();
-        return response()->json(['message' => 'Student updated successfully'], 200);   
+        return response()->json(['message' => 'Student updated successfully'], 200);
     }
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -133,7 +138,6 @@ class StudentController extends Controller
         $ana = student::find($id);
         $ana->delete();
         return "the id have been deleted ";
-    
     }
     /**
      * Store a newly created resource in storage.
@@ -143,8 +147,8 @@ class StudentController extends Controller
      */
     public function search($name)
     {
-        
-        return  student::where('First_Name','like','%'.$name.'%')->get();
+
+        return  student::where('First_Name', 'like', '%' . $name . '%')->get();
     }
 
 
@@ -155,8 +159,8 @@ class StudentController extends Controller
             return [
                 'id' => $stu->id,
                 'First_Name' => $stu->First_Name,
-                'Last_Name' => $stu->Last_Name, 
-                'phone_number' => $stu->phone_number, 
+                'Last_Name' => $stu->Last_Name,
+                'phone_number' => $stu->phone_number,
             ];
         });
         return $studentsData;
@@ -171,8 +175,8 @@ class StudentController extends Controller
             return [
                 'id' => $stu->id,
                 'First_Name' => $stu->First_Name,
-                'Last_Name' => $stu->Last_Name, 
-                'phone_number' => $stu->phone_number, 
+                'Last_Name' => $stu->Last_Name,
+                'phone_number' => $stu->phone_number,
             ];
         });
         return $studentsData;
@@ -211,7 +215,7 @@ class StudentController extends Controller
     //             });
     //         });
     //     }
-       
+
 
     //     $attendances = $initialQuery->get();
 
@@ -231,95 +235,86 @@ class StudentController extends Controller
 
 
 
-        // public function searches(Request $request)
-        // {
-        //     $classId = $request->input('class_id');
-        //     $sectionId = $request->input('section_id');
-    
-        //     $students = Student::where('Class_ID', $classId)
-        //                 ->where('Section_ID', $sectionId)
-        //                 ->get();
-    
-        //     return response()->json($students);
-        // }
-    
-    
+    // public function searches(Request $request)
+    // {
+    //     $classId = $request->input('class_id');
+    //     $sectionId = $request->input('section_id');
 
+    //     $students = Student::where('Class_ID', $classId)
+    //                 ->where('Section_ID', $sectionId)
+    //                 ->get();
 
-
-        // public function joinn()
-        // {
-        //     $results = DB::table('classes')
-        //                 ->join('sections', 'classes.id', '=', 'sections.Class_ID')
-        //                 ->join('students', 'sections.id', '=', 'students.Section_ID')
-        //                 ->select('classes.Class_Name', 'sections.Section_Name', 'students.First_Name', 'students.Last_Name')
-        //                 ->get();
-    
-        //     return view('my_view', ['results' => $results]);
-        // }
-
-
-        public function searches()
-        {
-            
-            $data = DB::table('students')
-                        ->join('sections', 'students.Section_ID', '=', 'sections.id')
-                        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
-                        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
-                        ->get();
-                        return response()->json([
-                            
-                            'data' => $data,
-                        ]);
-                    }
+    //     return response()->json($students);
+    // }
 
 
 
 
-                    public function studensearch($id)
-{
-    $data = DB::table('students')
-        ->join('sections', 'students.Section_ID', '=', 'sections.id')
-        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
-        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
-        ->where('students.id', $id)
-        ->get();
-        
-    return response()->json([
-        'data' => $data,
-    ]);
+
+    // public function joinn()
+    // {
+    //     $results = DB::table('classes')
+    //                 ->join('sections', 'classes.id', '=', 'sections.Class_ID')
+    //                 ->join('students', 'sections.id', '=', 'students.Section_ID')
+    //                 ->select('classes.Class_Name', 'sections.Section_Name', 'students.First_Name', 'students.Last_Name')
+    //                 ->get();
+
+    //     return view('my_view', ['results' => $results]);
+    // }
+
+
+    // public function searches()
+    // {
+
+    //     $data = DB::table('students')
+    //         ->join('sections', 'students.Section_ID', '=', 'sections.id')
+    //         ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+    //         ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+    //         ->get();
+    //     return response()->json([
+
+    //         'data' => $data,
+    //     ]);
+    // }
+
+
+
+    public function studensearch($id)
+    {
+        $data = DB::table('students')
+            ->join('sections', 'students.Section_ID', '=', 'sections.id')
+            ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+            ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+            ->where('students.id', $id)
+            ->get();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function studentsearchbysection($id)
+    {
+        $data = DB::table('students')
+            ->join('sections', 'students.Section_ID', '=', 'sections.id')
+            ->join('classes', 'sections.Class_ID', '=', 'classes.id')
+            ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
+            ->where('sections.id', $id)
+            ->get();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-public function studentsearchbysection($id)
-{
-    $data = DB::table('students')
-        ->join('sections', 'students.Section_ID', '=', 'sections.id')
-        ->join('classes', 'sections.Class_ID', '=', 'classes.id')
-        ->select('students.*', 'sections.Section_Name', 'classes.Class_Name')
-        ->where('sections.id', $id)
-        ->get();
-        
-    return response()->json([
-        'data' => $data,
-    ]);
-}
-
-
-
-
-
-
-
-}
-

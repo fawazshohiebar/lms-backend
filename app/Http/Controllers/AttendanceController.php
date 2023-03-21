@@ -10,6 +10,7 @@ use App\Models\classes;
 
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 class AttendanceController extends Controller
 {
     /**
@@ -204,18 +205,18 @@ class AttendanceController extends Controller
      * @param  \App\Models\attendance  $attendance
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateattendanceRequest $request, attendance $attendance,$id)
+    public function update(UpdateattendanceRequest $request, attendance $attendance, $id)
     {
         $attendance = attendance::find($id);
         if (!$attendance) {
             return response()->json(['message' => 'attendance not found'], 404);
         }
-            $attendance->Date = $request->has('Date')? $request->input('Date'):$attendance->Date;
-            $attendance->Status = $request->has('Status')?$request->input('Status'):$attendance->Status;
-            $attendance->Students_ID = $request->has('Students_ID')?$request->input('Students_ID'):$attendance->Students_ID;
+        $attendance->Date = $request->has('Date') ? $request->input('Date') : $attendance->Date;
+        $attendance->Status = $request->has('Status') ? $request->input('Status') : $attendance->Status;
+        $attendance->Students_ID = $request->has('Students_ID') ? $request->input('Students_ID') : $attendance->Students_ID;
 
-            $attendance->save();
-            return response()->json(['message' => 'attendance updated successfully'], 200);   
+        $attendance->save();
+        return response()->json(['message' => 'attendance updated successfully'], 200);
     }
 
     /**
@@ -233,7 +234,7 @@ class AttendanceController extends Controller
 
 
 
-    
+
     public function search($date)
     {
         $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
