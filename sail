@@ -14,7 +14,6 @@ if [ "$MACHINE" == "UNKNOWN" ]; then
 
     exit 1
 fi
-
 # Determine if stdout is a terminal...
 if test -t 1; then
     # Determine if colors are supported...
