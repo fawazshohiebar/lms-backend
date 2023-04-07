@@ -15,12 +15,18 @@ class AuthController extends Controller
 {
     public function index($id = null)
     {
+    //    return dd(Auth::check());$user = Auth::user();
+ 
+ if(Auth::user()->Role=='Admin')
+    {
         if ($id === null) {
             return User::all();
         } else {
             return User::find($id);
         }
     }
+else abort(403);
+}
 
     public function destroy($id)
     {

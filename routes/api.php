@@ -29,12 +29,14 @@ use GuzzleHttp\Middleware;
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+Route::get('/getuser', [AuthController::class, 'index']);
+
 });
 /////////////////////
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/getuser', [AuthController::class, 'index']);
-Route::get('/getuser/{id}', [AuthController::class, 'index']);
+// Route::get('/getuser', [AuthController::class, 'index']);
+// Route::get('/getuser/{id}', [AuthController::class, 'index']);
 Route::put('/user/{id}', [AuthController::class, 'update']);
 Route::delete('/user/{id}', [AuthController::class, 'destroy']);
 Route::get('/user/search/{searchterm}', [AuthController::class, 'search']);

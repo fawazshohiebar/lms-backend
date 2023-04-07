@@ -16,6 +16,7 @@
         "postcss": "^8.1.14"
     },
     "dependencies": {
+        "docker": "^1.0.0",
         "vercel": "^28.17.0"
     }
 }
